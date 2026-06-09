@@ -16,6 +16,8 @@ export class CommandHandler {
     switch (command) {
       case "login":
         return this.handleLogin(args);
+      case "logout":
+        return this.handleLogout();
       default:
         return `Perintah tidak dikenal."${command}"`;
     }
@@ -32,5 +34,13 @@ export class CommandHandler {
       lines.push(`[notifikasi] ${notif}`);
     }
     return lines.join("\n");
+  }
+
+  private handleLogout(): string {
+    const result = this.sessionService.logout();
+    if (result.success) {
+      return result.message;
+    }
+    return result.error;
   }
 }

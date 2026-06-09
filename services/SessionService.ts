@@ -31,4 +31,13 @@ export class SessionService {
       notifications,
     };
   }
+
+  logout(): ServiceResult {
+    const username = this.store.getCurrentUser();
+    if (!username) {
+      return { success: false, error: "Tidak ada sesi aktif." };
+    }
+    this.store.setCurrentUser(null);
+    return { success: true, message: `Logout` };
+  }
 }
