@@ -18,6 +18,8 @@ export class CommandHandler {
         return this.handleLogin(args);
       case "logout":
         return this.handleLogout();
+      case "add-locker":
+        return this.handleAddLocker(args);
       default:
         return `Perintah tidak dikenal."${command}"`;
     }
@@ -42,5 +44,19 @@ export class CommandHandler {
       return result.message;
     }
     return result.error;
+  }
+
+  private requireLogin(): boolean {
+    return this.sessionService.getCurrentUser() !== null;
+  }
+
+  private handleAddLocker(args: string[]): string {
+    if (!this.requireLogin) return "Anda harus login dahulu.";
+    if (!this.sessionService.isAdmin())
+      return "Hanya admin yang dapat menambahkan loker.";
+
+    if (args.length === 0) return "Penggunaan: add-locker <locker-id>";
+    const result = this.lockerService.addLocker(args[0]);
+    return result.success ? result.message : result.error;
   }
 }

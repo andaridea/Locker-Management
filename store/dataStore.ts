@@ -46,4 +46,29 @@ export class Store {
     user.pendingNotifications = [];
     return notifications;
   }
+
+  // Locker
+  getLocker(lockerId: string): Locker | undefined {
+    return this.lockers.get(lockerId);
+  }
+
+  getAllLockers(): Locker[] {
+    return Array.from(this.lockers.values());
+  }
+
+  addLocker(lockerId: string): Locker {
+    const locker: Locker = {
+      id: lockerId,
+      status: "TERSEDIA",
+      reservedBy: null,
+      waitingQueue: [],
+    };
+
+    this.lockers.set(lockerId, locker);
+    return locker;
+  }
+
+  hasLocker(lockerId: string): boolean {
+    return this.lockers.has(lockerId);
+  }
 }

@@ -40,4 +40,12 @@ export class SessionService {
     this.store.setCurrentUser(null);
     return { success: true, message: `Logout` };
   }
+
+  getCurrentUser(): string | null {
+    return this.store.getCurrentUser();
+  }
+
+  isAdmin(): boolean {
+    return this.store.getCurrentUser() === ADMIN_USER;
+  }
 }
