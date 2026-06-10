@@ -24,6 +24,11 @@ export class SessionService {
     let welcomeMessage = `Hallo, ${username} !`;
     if (username === ADMIN_USER) {
       welcomeMessage += "\nAnda memiliki akses ke manajemen loker.";
+    } else {
+      const { assignedLockers } = this.getLockerSummaryForUser(username);
+      if (assignedLockers.length === 0) {
+        welcomeMessage += "\nAnda tidak memiliki loker yang ditugaskan.";
+      }
     }
 
     return {
@@ -47,5 +52,13 @@ export class SessionService {
 
   isAdmin(): boolean {
     return this.store.getCurrentUser() === ADMIN_USER;
+  }
+
+  private getLockerSummaryForUser(username: string) {
+    const assignedLockers = this.store
+      .getAllLockers()
+      .filter((l) => l.reservedBy === username)
+      .map((l) => l.id);
+    return { assignedLockers };
   }
 }

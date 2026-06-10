@@ -95,4 +95,24 @@ export class LockerService {
       message: `Anda bergabung ke antrian loker ${lockerId} di posisi ${position}.`,
     };
   }
+
+  getUserStatus(username: string): {
+    assignedLockers: string[];
+    queuePositions: { lockerId: string; position: number }[];
+  } {
+    const assignedLockers: string[] = [];
+    const queuePositions: { lockerId: string; position: number }[] = [];
+
+    for (const locker of this.store.getAllLockers()) {
+      if (locker.reservedBy === username) {
+        assignedLockers.push(locker.id);
+      }
+      const pos = locker.waitingQueue.indexOf(username);
+      if (pos !== -1) {
+        queuePositions.push({ lockerId: locker.id, position: pos + 1 });
+      }
+    }
+
+    return { assignedLockers, queuePositions };
+  }
 }
