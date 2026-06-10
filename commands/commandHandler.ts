@@ -24,6 +24,8 @@ export class CommandHandler {
         return this.handleListLockers();
       case "reserve":
         return this.handleReserveLocker(args);
+      case "release":
+        return this.handleRelease(args);
       default:
         return `Perintah tidak dikenal."${command}"`;
     }
@@ -83,6 +85,17 @@ export class CommandHandler {
     if (args.length === 0) return "Penggunaan: reserve <locker-id>";
 
     const result = this.lockerService.reserveLocker(
+      args[0],
+      this.sessionService.getCurrentUser()!,
+    );
+    return result.success ? result.message : result.error;
+  }
+
+  private handleRelease(args: string[]): string {
+    if (!this.requireLogin()) return "Anda harus login terlebih dahulu.";
+    if (args.length === 0) return "Penggunaan: release <locker-id>";
+
+    const result = this.lockerService.releaseLocker(
       args[0],
       this.sessionService.getCurrentUser()!,
     );
