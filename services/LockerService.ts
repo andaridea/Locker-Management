@@ -19,4 +19,20 @@ export class LockerService {
   listLocker(): Locker[] {
     return this.store.getAllLockers();
   }
+
+  reserveLocker(lockerId: string, username: string): ServiceResult {
+    const locker = this.store.getLocker(lockerId);
+    if (!locker) {
+      return { success: false, error: `Loker ${lockerId} tidak ditemukan.` };
+    }
+    if (locker.status === "DIPESAN") {
+      return { success: false, error: `Loker ${lockerId} sudah dipesan.` };
+    }
+    locker.status = "DIPESAN";
+    locker.reservedBy = username;
+    return {
+      success: true,
+      message: `Loker ${lockerId} telah dipesan untuk Anda.`,
+    };
+  }
 }

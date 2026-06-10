@@ -22,6 +22,8 @@ export class CommandHandler {
         return this.handleAddLocker(args);
       case "list-locker":
         return this.handleListLockers();
+      case "reserve":
+        return this.handleReserveLocker(args);
       default:
         return `Perintah tidak dikenal."${command}"`;
     }
@@ -74,5 +76,16 @@ export class CommandHandler {
         return `${l.id} - ${status}`;
       })
       .join("\n");
+  }
+
+  private handleReserveLocker(args: string[]): string {
+    if (!this.requireLogin()) return "Anda harus login terlebih dahulu.";
+    if (args.length === 0) return "Penggunaan: reserve <locker-id>";
+
+    const result = this.lockerService.reserveLocker(
+      args[0],
+      this.sessionService.getCurrentUser()!,
+    );
+    return result.success ? result.message : result.error;
   }
 }
