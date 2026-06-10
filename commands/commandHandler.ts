@@ -28,6 +28,8 @@ export class CommandHandler {
         return this.handleRelease(args);
       case "queue":
         return this.handleQueue(args);
+      case "status":
+        return this.handleStatus();
       default:
         return `Perintah tidak dikenal."${command}"`;
     }
@@ -113,5 +115,32 @@ export class CommandHandler {
       this.sessionService.getCurrentUser()!,
     );
     return result.success ? result.message : result.error;
+  }
+
+  private handleStatus(): string {
+    if (!this.requireLogin()) return "Anda harus login terlebih dahulu.";
+    const username = this.sessionService.getCurrentUser()!;
+    const { assignedLockers, queuePositions } =
+      this.lockerService.getUserStatus(username);
+
+    const lines: string[] = [];
+
+    lines.push("Loker yang ditugaskan:");
+    if (assignedLockers.length === 0) {
+      lines.push("  (tidak ada)");
+    } else {
+      assignedLockers.forEach((id, i) => lines.push(`  ${i + 1}. ${id}`));
+    }
+
+    lines.push("\nAntrian tunggu:");
+    if (queuePositions.length === 0) {
+      lines.push("  (tidak ada)");
+    } else {
+      queuePositions.forEach(({ lockerId, position }) =>
+        lines.push(`  ${lockerId} -> posisi ${position}`),
+      );
+    }
+
+    return lines.join("\n");
   }
 }
