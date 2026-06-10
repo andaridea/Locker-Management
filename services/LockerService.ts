@@ -1,3 +1,4 @@
+import { Locker } from "../models/Locker";
 import { Store } from "../store/dataStore";
 
 export type ServiceResult =
@@ -13,5 +14,9 @@ export class LockerService {
     }
     this.store.addLocker(lockerId);
     return { success: true, message: `Loker ${lockerId} telah didaftarkan.` };
+  }
+
+  listLocker(): Locker[] {
+    return this.store.getAllLockers();
   }
 }

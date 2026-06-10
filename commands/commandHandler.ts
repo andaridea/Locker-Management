@@ -20,6 +20,8 @@ export class CommandHandler {
         return this.handleLogout();
       case "add-locker":
         return this.handleAddLocker(args);
+      case "list-locker":
+        return this.handleListLockers();
       default:
         return `Perintah tidak dikenal."${command}"`;
     }
@@ -58,5 +60,19 @@ export class CommandHandler {
     if (args.length === 0) return "Penggunaan: add-locker <locker-id>";
     const result = this.lockerService.addLocker(args[0]);
     return result.success ? result.message : result.error;
+  }
+
+  private handleListLockers(): string {
+    if (!this.requireLogin()) return "Anda harus login terlebih dahulu.";
+    const lockers = this.lockerService.listLocker();
+    if (lockers.length === 0) return "Belum ada loker yang terdaftar.";
+
+    return lockers
+      .map((l) => {
+        const status =
+          l.status === "TERSEDIA" ? "TERSEDIA" : `DIPESAN oleh ${l.reservedBy}`;
+        return `${l.id} - ${status}`;
+      })
+      .join("\n");
   }
 }
