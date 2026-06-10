@@ -67,4 +67,32 @@ export class LockerService {
     locker.reservedBy = null;
     return { success: true, message: `Loker ${lockerId} berhasil dilepas.` };
   }
+
+  joinQueue(lockerId: string, username: string): ServiceResult {
+    const locker = this.store.getLocker(lockerId);
+    if (!locker) {
+      return { success: false, error: `Loker ${lockerId} tidak ditemukan.` };
+    }
+    if (locker.status === "TERSEDIA") {
+      return {
+        success: false,
+        error: `Loker ${lockerId} tersedia, silakan langsung pesan.`,
+      };
+    }
+    if (locker.reservedBy === username) {
+      return { success: false, error: `Anda sudah memesan loker ${lockerId}.` };
+    }
+    if (locker.waitingQueue.includes(username)) {
+      return {
+        success: false,
+        error: `Anda sudah ada dalam antrian loker ${lockerId}.`,
+      };
+    }
+    locker.waitingQueue.push(username);
+    const position = locker.waitingQueue.length;
+    return {
+      success: true,
+      message: `Anda bergabung ke antrian loker ${lockerId} di posisi ${position}.`,
+    };
+  }
 }

@@ -38,7 +38,7 @@ export class SessionService {
       return { success: false, error: "Tidak ada sesi aktif." };
     }
     this.store.setCurrentUser(null);
-    return { success: true, message: `Logout` };
+    return { success: true, message: `Selamat tinggal, ${username}` };
   }
 
   getCurrentUser(): string | null {
